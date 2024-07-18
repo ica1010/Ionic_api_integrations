@@ -1,0 +1,7 @@
+{
+  "name": "MyPost",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
