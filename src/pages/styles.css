@@ -1,0 +1,59 @@
+.publish-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;     /* Center vertically */
+    height: 100vh;           /* Full viewport height */
+    background-color: #f4f4f9;
+  }
+  
+  .publish-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; /* Optional: Adjust based on your needs */
+  }
+  
+  .publish-form h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .publish-form div {
+    margin-bottom: 15px;
+  }
+  
+  .publish-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .publish-form input,
+  .publish-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .publish-form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .publish-form button:hover {
+    background-color: #0056b3;
+  }
+  
+.scroll-y{
+    display: flex !important;
+    justify-content: center !important;
+}
