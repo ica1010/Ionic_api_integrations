@@ -33,6 +33,7 @@ import '@ionic/react/css/palettes/dark.system.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import PublishArticle from './pages/PublishArticle';
 
 setupIonicReact();
 
@@ -45,6 +46,7 @@ const App: React.FC = () => (
         </Route>
         <Route path="/home" exact={true}>
           <Home />
+          <Route path="/publish-article" component={PublishArticle} exact={true} />
         </Route>
         <Route path="/message/:id">
            <ViewMessage />

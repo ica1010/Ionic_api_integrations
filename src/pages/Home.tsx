@@ -1,57 +1,58 @@
-import MessageListItem from '../components/MessageListItem';
-import { useState } from 'react';
-import { Message, getMessages } from '../data/messages';
-import {
-  IonContent,
-  IonHeader,
-  IonList,
-  IonPage,
-  IonRefresher,
-  IonRefresherContent,
-  IonTitle,
-  IonToolbar,
-  useIonViewWillEnter
-} from '@ionic/react';
-import './Home.css';
+// src/pages/Home.tsx
+import React, { useEffect, useState } from 'react';
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonSpinner, IonButton } from '@ionic/react';
+import { useHistory } from 'react-router-dom';
+import axios from 'axios';
 
 const Home: React.FC = () => {
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const history = useHistory();
 
-  const [messages, setMessages] = useState<Message[]>([]);
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+        setArticles(response.data);
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useIonViewWillEnter(() => {
-    const msgs = getMessages();
-    setMessages(msgs);
-  });
+    fetchArticles();
+  }, []);
 
-  const refresh = (e: CustomEvent) => {
-    setTimeout(() => {
-      e.detail.complete();
-    }, 3000);
+  const goToPublishArticle = () => {
+    history.push('/publish-article');
   };
 
   return (
-    <IonPage id="home-page">
+    <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Inbox</IonTitle>
+          <IonTitle>Home</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent fullscreen>
-        <IonRefresher slot="fixed" onIonRefresh={refresh}>
-          <IonRefresherContent></IonRefresherContent>
-        </IonRefresher>
-
-        <IonHeader collapse="condense">
-          <IonToolbar>
-            <IonTitle size="large">
-              Inbox
-            </IonTitle>
-          </IonToolbar>
-        </IonHeader>
-
-        <IonList>
-          {messages.map(m => <MessageListItem key={m.id} message={m} />)}
-        </IonList>
+      <IonContent className="ion-padding">
+        <IonButton expand="full" onClick={goToPublishArticle}>
+          Publish New Article
+        </IonButton>
+        {loading ? (
+          <IonSpinner />
+        ) : (
+          <IonList>
+            {articles.map(article => (
+              <IonItem key={article.id}>
+                <IonLabel>
+                  <h2>{article.title}</h2>
+                  <p>{article.body}</p>
+                </IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        )}
       </IonContent>
     </IonPage>
   );
