@@ -1,50 +1,57 @@
-// src/pages/PublishArticle.tsx
 import React, { useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonTextarea, IonButton, IonToast } from '@ionic/react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
-const PublishArticle: React.FC = () => {
+const PublishArticle = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const history = useHistory();
 
-  const publishArticle = async () => {
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
     try {
-      await axios.post('https://jsonplaceholder.typicode.com/posts', { title, body: content });
-      setToastMessage('Article published successfully!');
+      await fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: title,
+          body: content,
+          userId: 1,
+        }),
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      })
+        .then((response) => response.json())
+        .then((json) => console.log(json));
+      //  axios.post('https://jsonplaceholder.typicode.com/posts', { title, content });
+      history.push('/home');
     } catch (error) {
-      setToastMessage('Failed to publish article.');
-    } finally {
-      setShowToast(true);
+      console.error('Error creating post:', error);
     }
   };
 
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Publish Article</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent className="ion-padding">
-        <IonItem>
-          <IonLabel position="floating">Title</IonLabel>
-          <IonInput value={title} onIonChange={(e) => setTitle(e.detail.value!)} />
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Content</IonLabel>
-          <IonTextarea value={content} onIonChange={(e) => setContent(e.detail.value!)} />
-        </IonItem>
-        <IonButton expand="full" onClick={publishArticle}>Publish</IonButton>
-        <IonToast
-          isOpen={showToast}
-          message={toastMessage}
-          duration={2000}
-          onDidDismiss={() => setShowToast(false)}
-        />
-      </IonContent>
-    </IonPage>
+    <div>
+      <h1>Publier un Article</h1>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label>Titre</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div>
+          <label>Contenu</label>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
+        </div>
+        <button type="submit">Publier</button>
+      </form>
+    </div>
   );
 };
 

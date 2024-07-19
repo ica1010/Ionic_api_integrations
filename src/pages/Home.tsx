@@ -1,61 +1,54 @@
-// src/pages/Home.tsx
 import React, { useEffect, useState } from 'react';
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonSpinner, IonButton } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+}
 
 const Home: React.FC = () => {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const history = useHistory();
+  const [posts, setPosts] = useState<Post[]>([]);
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
-        setArticles(response.data);
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
-
-  const goToPublishArticle = () => {
-    history.push('/publish-article');
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get('https://jsonplaceholder.typicode.com/posts');
+      console.log(response.data);  // Ajoutez cette ligne pour vérifier la réponse de l'API
+      setPosts(response.data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
   };
 
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
   return (
-    <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Home</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent className="ion-padding">
-        <IonButton expand="full" onClick={goToPublishArticle}>
-          Publish New Article
-        </IonButton>
-        {loading ? (
-          <IonSpinner />
-        ) : (
-          <IonList>
-            {articles.map(article => (
-              <IonItem key={article.id}>
-                <IonLabel>
-                  <h2>{article.title}</h2>
-                  <p>{article.body}</p>
-                </IonLabel>
-              </IonItem>
-            ))}
-          </IonList>
-        )}
-      </IonContent>
-    </IonPage>
+    <div>
+      <h1>Liste des Posts</h1>
+      <ul>
+        {Array.isArray(posts) && posts.map((post) => (
+          <li key={post.id}>
+            <Link to={`/posts/${post.id}`}>{post.title}</Link>
+            <button onClick={() => handleDelete(post.id)}>Delete</button>
+            <Link to={`/posts/${post.id}/edit`}>Edit</Link>
+          </li>
+        ))}
+      </ul>
+      <Link to="/publish">Publish New Article</Link>
+    </div>
   );
+
+  async function handleDelete(id: number) {
+    try {
+      await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+      setPosts(posts.filter(post => post.id !== id));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
+  }
 };
 
 export default Home;
